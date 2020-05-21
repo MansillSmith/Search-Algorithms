@@ -333,9 +333,6 @@ public class AStar{
                     //PrintFrontier(frontier);
                 }
             }
-            System.out.println();
-            PrintMap(map);
-            System.out.println();
             //If the correct path was found
             if(correctPath != null){
                 //Change all of the states which are in the correct path to a dot
