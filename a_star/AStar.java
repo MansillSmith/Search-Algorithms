@@ -313,7 +313,6 @@ public class AStar{
 
             //Loop until the answer has been found
             Path correctPath = null;
-            int NUM = 0;
             while (correctPath == null){
                 //Get a path from the frontier
                 Path p = null;
@@ -330,12 +329,13 @@ public class AStar{
                 }
                 else{
                     p.Expand(frontier, map);
-                    //System.out.println(frontier.Size());
-                    PrintFrontier(frontier, NUM);
+                    System.out.println(frontier.Size());
+                    //PrintFrontier(frontier);
                 }
-                NUM++;
             }
-            System.out.println(NUM);
+            System.out.println();
+            PrintMap(map);
+            System.out.println();
             //If the correct path was found
             if(correctPath != null){
                 //Change all of the states which are in the correct path to a dot
@@ -355,8 +355,7 @@ public class AStar{
     }
 
     //Prints the frontier to the screen
-    private static void PrintFrontier(PriorityQueue frontier, int NUM){
-        if(NUM == 48){
+    private static void PrintFrontier(PriorityQueue frontier){
             ArrayList<Path> listOfPaths = frontier.GetListOfPaths();
             //For each path
             for(int i = 0; i <listOfPaths.size(); i++){
@@ -370,7 +369,6 @@ public class AStar{
             System.out.println();
             System.out.println();
             System.out.println();
-        }
     }
 
     //Prints the map
