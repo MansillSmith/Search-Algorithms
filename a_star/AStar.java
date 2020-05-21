@@ -10,6 +10,7 @@ Solve a given text file map using the A* method
 import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.text.DecimalFormat;
 
 public class AStar{
     static int numInputs = 1;
@@ -209,7 +210,7 @@ public class AStar{
                 //If the last state of this path is contained in any other path
                 if(listOfPaths.get(i).listOfStates.contains(this.GetLastState())){
                     //Remove the path with the highest total cost, return if this had the lowest
-                    if(this.GetTotalCost() < listOfPaths.get(i).GetTotalCost()){
+                    if(this.GetTotalCost() < listOfPaths.get(i).GetPathSubset(this.GetLastState()).GetTotalCost()){
                         listOfPaths.remove(i);
                         return true;
                     }
@@ -219,6 +220,16 @@ public class AStar{
                 }
             }
             return true;
+        }
+
+        //Used for calculating which path gets removed when a collision occurs
+        private Path GetPathSubset(State s){
+            int index = this.listOfStates.indexOf(s);
+            Path p = new Path(this.listOfStates.get(0));
+            for(int i = 1; i <= index; i++){
+                p.AddState(this.listOfStates.get(i));
+            }
+            return p;
         }
 
         //Creates a copy of the list of states
@@ -302,6 +313,7 @@ public class AStar{
 
             //Loop until the answer has been found
             Path correctPath = null;
+            int NUM = 0;
             while (correctPath == null){
                 //Get a path from the frontier
                 Path p = null;
@@ -318,11 +330,12 @@ public class AStar{
                 }
                 else{
                     p.Expand(frontier, map);
-                    System.out.println(frontier.Size());
-                    //PrintFrontier(frontier);
+                    //System.out.println(frontier.Size());
+                    PrintFrontier(frontier, NUM);
                 }
+                NUM++;
             }
-
+            System.out.println(NUM);
             //If the correct path was found
             if(correctPath != null){
                 //Change all of the states which are in the correct path to a dot
@@ -336,26 +349,28 @@ public class AStar{
             else{
                 System.err.println("A Path was not found");
             }
-            
+
             PrintMap(map);
         }
     }
 
     //Prints the frontier to the screen
-    private static void PrintFrontier(PriorityQueue frontier){
-        ArrayList<Path> listOfPaths = frontier.GetListOfPaths();
-        //For each path
-        for(int i = 0; i <listOfPaths.size(); i++){
-            ArrayList<State> listOfStates = listOfPaths.get(i).listOfStates;
-            //For each state
-            for(int j = 0; j < listOfStates.size(); j++){
-                System.out.print(listOfStates.get(j).toString() + " | ");
+    private static void PrintFrontier(PriorityQueue frontier, int NUM){
+        if(NUM == 48){
+            ArrayList<Path> listOfPaths = frontier.GetListOfPaths();
+            //For each path
+            for(int i = 0; i <listOfPaths.size(); i++){
+                ArrayList<State> listOfStates = listOfPaths.get(i).listOfStates;
+                //For each state
+                for(int j = 0; j < listOfStates.size(); j++){
+                    System.out.print(listOfStates.get(j).toString() + " | ");
+                }
+                System.out.println();
             }
             System.out.println();
+            System.out.println();
+            System.out.println();
         }
-        System.out.println();
-        System.out.println();
-        System.out.println();
     }
 
     //Prints the map
@@ -378,7 +393,9 @@ public class AStar{
             ArrayList<State> listOfStates = list.get(y);
             for(int x = 0; x < listOfStates.size(); x++){
                 State thisState = listOfStates.get(x);
-                System.out.print(Math.round(thisState.distFromGoal) + ",");
+                //System.out.print(Math.round(thisState.distFromGoal) + ",");
+                DecimalFormat df = new DecimalFormat("##.###");
+                System.out.print(df.format(thisState.distFromGoal) + ",");
             }
             System.out.println();
         }
