@@ -1,0 +1,20 @@
++-------------------------------------------+
+|   XXXXXXXX               XXXXXXX         |
+|  XXXXXXXXXX                              |
+|  XXXXXXXXXX                              |
+|    XXXXXX                XXXXXXX         |
+|     XXXX               XXXXXXXXXXXX      |
+|      XX                  XXXXXXXX        |
+|                             XX           |
+|      XX                                  |
+|   XXXXXXXXX                              |
+|   XXXXXXXXXXXX        XXXXXXXXXXXXXXXXXX |
+|XX XXXXXXXXX                 XXXXXXXXXXXX |
+|X    XXXXXXXXXXXXXXXX        XXXXXXXXXXX  |
+|XXXXXXXXXXXXXXXX        XXXXXXXXXXXXXXXXX |
+|     XXXXXXX       XXXXXXXXXXXXXXXXX      |
+|     XXXXXXXXXXXX       XXXXXXXXXXXXXX    |
+|   XXXXXXXXXXXXXG           XXXXXXXX      |
+|     SXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX   X|
+|                                        XX|
++------------------------------------------+
