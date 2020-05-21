@@ -16,8 +16,10 @@ public class AStar{
 
     //A queue which orders its contents based on a value
     private class PriorityQueue{
+        //Stores the paths in the queue
         private ArrayList<Path> queue;
 
+        //Constructs a priority queue
         public PriorityQueue(){
             queue = new ArrayList<Path>();
         }
@@ -41,16 +43,30 @@ public class AStar{
             return queue.remove(0);
         }
 
+        //Gets the list of paths from the queue
         public ArrayList<Path> GetListOfPaths(){
             return queue;
+        }
+
+        //Calculates if the queue is empty
+        public Boolean IsEmpty(){
+            return queue.size() == 0;
+        }
+
+        //Gets the size of the queue
+        public int Size(){
+            return queue.size();
         }
     }
 
     //Records a state
     private class State{
+        //Records the character of the state
         private String character;
+        //Records the position of the state
         private int x;
         private int y;
+        //Records how far away from the goal this state is
         public double distFromGoal;
 
         //Constructs a State
@@ -61,18 +77,23 @@ public class AStar{
             this.character = character;
         }
 
+        //Gets the X coordinate of the state
         public int GetX(){
             return x;
         }
 
+        //Gets the Y coordinate of the state
         public int GetY(){
             return y;
         }
 
+        //Gets the character of the state
         public String GetCharacter(){
             return character;
         }
 
+        //Gets the character of the state
+        //Used at the end to mark the correct path
         public String SetCharacter(String character){
             return this.character = character;
         }
@@ -82,30 +103,22 @@ public class AStar{
             //Generate the new paths
             ArrayList<Path> newPaths = new ArrayList<Path>();            
 
-            //
-            //Check if the values are too large or too small
-            //
-
             newPaths.add(new Path(thisPath, map.get(this.GetY()).get(this.GetX() -1)));
             newPaths.add(new Path(thisPath, map.get(this.GetY()).get(this.GetX() + 1)));
             newPaths.add(new Path(thisPath, map.get(this.GetY() -1).get(this.GetX())));
             newPaths.add(new Path(thisPath, map.get(this.GetY() +1).get(this.GetX())));
 
-            ArrayList<Integer> pathsToRemove = new ArrayList<Integer>();
-            //Check if the paths are valid
+            //For all the new paths
             for(int i = 0; i < newPaths.size(); i++){
-                //remove the invalid paths
+                //If the path is not valid
                 if(!newPaths.get(i).IsValid(frontier)){
-                    pathsToRemove.add(i);
+                    //Remove the path
+                    newPaths.remove(i);
+                    i--;
                 }
             }
 
-            //Removes the invalid paths
-            for(int i = 0; i < pathsToRemove.size(); i++){
-                newPaths.remove(pathsToRemove.get(i));
-            }
-
-            //Add the new paths to the frontier
+            //Add the surviving new paths to the frontier
             for(int i = 0; i < newPaths.size(); i++){
                 frontier.Add(newPaths.get(i));
             }              
@@ -116,6 +129,7 @@ public class AStar{
             return (GetCharacter().equals(" ") || GetCharacter().equals("S") || GetCharacter().equals("G"));
         }
 
+        //Prints out the values which define a state
         @Override
         public String toString(){
             return GetX() + ", " + GetY() + "," + GetCharacter();
@@ -134,10 +148,11 @@ public class AStar{
 
         //Create a new path from another path
         public Path(Path p, State s){
-            listOfStates = p.GetListOfStates();
+            listOfStates = CopyList(p.GetListOfStates());
             this.AddState(s);
         }
 
+        //Gets the list of states from the path
         public ArrayList<State> GetListOfStates(){
             return listOfStates;
         }
@@ -170,6 +185,7 @@ public class AStar{
             return (GetLastState().IsValidMove() && !DoesThePathLoop() && UniquePath(frontier));
         }
 
+        //Gets the final state of the path
         private State GetLastState(){
             return listOfStates.get(listOfStates.size() -1);
         }
@@ -178,6 +194,7 @@ public class AStar{
         private Boolean DoesThePathLoop(){
             State s = listOfStates.get(listOfStates.size() -1);
             for(int i = 0; i < listOfStates.size() - 1; i++){
+                //If the final state exists within the list of of states
                 if(s.equals(listOfStates.get(i))){
                     return true;
                 }
@@ -203,14 +220,25 @@ public class AStar{
             }
             return true;
         }
+
+        //Creates a copy of the list of states
+        private ArrayList<State> CopyList(ArrayList<State> list){
+            ArrayList<State> l = new ArrayList<State>();
+            for(int i = 0; i < list.size(); i++){
+                l.add(list.get(i));
+            }
+            return l;
+        }
     }
 
 
     public static void main(String[] args) {
+        //If the user has inputted the wrong number of inputs
         if(args.length != numInputs){
             System.err.println("Please input the txt map file");
         }
         else{
+            //Stores the map
             ArrayList<ArrayList<State>> map = new ArrayList<ArrayList<State>>();
             String mapFile = args[0];
 
@@ -218,6 +246,7 @@ public class AStar{
             State goalState = null;
             State startState = null;
 
+            //Used to create new objects
             AStar astar = new AStar();
 
             try{
@@ -226,8 +255,10 @@ public class AStar{
                 int numlines = 0;
 
                 String line = reader.readLine();
+                //While there are lines left in the file
                 while(line != null){
                     ArrayList<State> temp = new ArrayList<State>();
+                    //For each character in the line
                     for(int i = 0; i < line.length(); i++){
                         String c = Character.toString(line.charAt(i));
 
@@ -242,6 +273,7 @@ public class AStar{
                         temp.add(s);
 
                     }
+                    //Adds the list of states to the map
                     map.add(temp);
                     line = reader.readLine();
                     numlines ++;
@@ -253,8 +285,10 @@ public class AStar{
             }
 
             //Set all the heuristic value for the states
+            //For each list of states
             for (int y = 0; y < map.size(); y++){
                 ArrayList<State> listOfStates = map.get(y);
+                //For each state
                 for(int x = 0; x < listOfStates.size(); x++){
                     State thisState = listOfStates.get(x);
                     thisState.distFromGoal = CalculateDistance(thisState.GetX(), thisState.GetY(), goalState.GetX(), goalState.GetY());
@@ -266,11 +300,17 @@ public class AStar{
             //Initialise the frontier
             frontier.Add(astar.new Path(startState));
 
-            Path correctPath = null;
             //Loop until the answer has been found
+            Path correctPath = null;
             while (correctPath == null){
                 //Get a path from the frontier
-                Path p = frontier.Remove();
+                Path p = null;
+                if(!frontier.IsEmpty()){
+                    p = frontier.Remove();
+                }
+                else{
+                    break;
+                }
 
                 //Check that this path doesn't contain the goal
                 if(p.ContainsGoal()){
@@ -278,12 +318,14 @@ public class AStar{
                 }
                 else{
                     p.Expand(frontier, map);
-                    PrintFrontier(frontier);
-                    break;
+                    System.out.println(frontier.Size());
+                    //PrintFrontier(frontier);
                 }
             }
 
+            //If the correct path was found
             if(correctPath != null){
+                //Change all of the states which are in the correct path to a dot
                 ArrayList<State> listOfCorrectStates = correctPath.listOfStates;
                 for(int i = 0; i< listOfCorrectStates.size(); i++){
                     if(!listOfCorrectStates.get(i).GetCharacter().equals("G") && !listOfCorrectStates.get(i).GetCharacter().equals("S")){
@@ -295,17 +337,17 @@ public class AStar{
                 System.err.println("A Path was not found");
             }
             
-
-
             PrintMap(map);
-            //PrintHeuristic(map);
         }
     }
 
+    //Prints the frontier to the screen
     private static void PrintFrontier(PriorityQueue frontier){
         ArrayList<Path> listOfPaths = frontier.GetListOfPaths();
+        //For each path
         for(int i = 0; i <listOfPaths.size(); i++){
             ArrayList<State> listOfStates = listOfPaths.get(i).listOfStates;
+            //For each state
             for(int j = 0; j < listOfStates.size(); j++){
                 System.out.print(listOfStates.get(j).toString() + " | ");
             }
@@ -316,9 +358,12 @@ public class AStar{
         System.out.println();
     }
 
+    //Prints the map
     public static void PrintMap(ArrayList<ArrayList<State>> list){
+        //For each list of states
         for (int y = 0; y < list.size(); y++){
             ArrayList<State> listOfStates = list.get(y);
+            //for each state
             for(int x = 0; x < listOfStates.size(); x++){
                 State thisState = listOfStates.get(x);
                 System.out.print(thisState.GetCharacter());
@@ -327,6 +372,7 @@ public class AStar{
         }
     }
 
+    //Prints out the Heuristic values for all of the states
     public static void PrintHeuristic(ArrayList<ArrayList<State>> list){
         for (int y = 0; y < list.size(); y++){
             ArrayList<State> listOfStates = list.get(y);
