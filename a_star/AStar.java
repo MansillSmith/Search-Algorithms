@@ -12,6 +12,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.text.DecimalFormat;
 
+import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.awt.*;
+
 public class AStar{
     static int numInputs = 1;
 
@@ -329,7 +333,7 @@ public class AStar{
                 }
                 else{
                     p.Expand(frontier, map);
-                    System.out.println(frontier.Size());
+                    //System.out.println(frontier.Size());
                     //PrintFrontier(frontier);
                 }
             }
@@ -346,6 +350,73 @@ public class AStar{
             else{
                 System.err.println("A Path was not found");
             }
+
+            int width = map.get(0).size();
+            int height = map.size();
+            int scale = 20;
+            BufferedImage image = new BufferedImage(width * scale, height * scale, BufferedImage.TYPE_INT_ARGB);
+            
+            for(int y =0; y < height; y++){
+                ArrayList<State> listOfStates = map.get(y);
+                for (int j = 0; j < scale; j ++){
+                    for(int x = 0; x < width; x++){
+                        for(int i = 0; i < scale; i ++){
+                            Color color = null;
+                            String character = listOfStates.get(x).GetCharacter();
+                            //If its water
+                            if(character.equals(" ")){
+                                //Blue
+                                color = new Color(0,0,255);
+                            }
+                            //If its the path
+                            else if (character.equals("·")){
+                                //Red
+                                color = new Color(255,0,0);
+                            }
+                            else if(character.equals("G")){
+                                color = new Color(255,215,0);
+                            }
+                            else if(character.equals("S")){
+                                color = new Color(0,0,0);
+                            }
+                            //If its land or the border
+                            else{
+                                //green
+                                color = new Color(0,255,0);
+                            }
+    
+                            image.setRGB(scale * x + i,scale * y + j,color.getRGB());
+                        }
+                            
+                    }
+                }
+                
+            }
+
+            JFrame frame = new JFrame();
+            frame.setLayout(new FlowLayout());
+            frame.getContentPane().setLayout(new FlowLayout());
+            frame.getContentPane().add(new JLabel(new ImageIcon(image)));
+
+            //MenuBar menubar = new JMenuBar();
+            //JMenu menu = new JMenu("New Map");
+            ////menu.addActionListener();
+            //menubar.add(menu);
+            //frame.setJMenuBar(menubar);
+
+            //JLabel label = new JLabel();
+            //label.setIcon(new ImageIcon(image));
+            //frame.getContentPane().add(label, BorderLayout.CENTER);
+            //frame.setLocationRelativeTo(null);
+
+            frame.setTitle("Map: " + mapFile);
+            frame.setSize(width,height);
+            frame.pack();
+            frame.setVisible(true);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+
+
 
             PrintMap(map);
         }
