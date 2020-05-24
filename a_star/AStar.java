@@ -356,10 +356,14 @@ public class AStar{
             int scale = 20;
             BufferedImage image = new BufferedImage(width * scale, height * scale, BufferedImage.TYPE_INT_ARGB);
             
+            //For each row acrros
             for(int y =0; y < height; y++){
                 ArrayList<State> listOfStates = map.get(y);
+                //Repeat scale times
                 for (int j = 0; j < scale; j ++){
+                    //For each column
                     for(int x = 0; x < width; x++){
+                        //Repeat scale times
                         for(int i = 0; i < scale; i ++){
                             Color color = null;
                             String character = listOfStates.get(x).GetCharacter();
